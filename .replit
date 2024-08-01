@@ -1,0 +1,1 @@
+run = "rm speller; gcc -O3 -Wno-write-strings dictionary.c -o dictionary speller.c -o speller; ./speller texts/tolstoy.txt"

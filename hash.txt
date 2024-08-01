@@ -1,0 +1,162 @@
+
+================================================================
+//First letter hash
+
+//#define SIZE 26
+unsigned int hash(const char *word)
+{
+  // Hash function, gets 0 index value of first character
+  return toupper(word[0]) - 65;
+}
+
+=================================================================
+//Sum all letters hash
+
+//#define SIZE 1000
+unsigned int hash(const char *word)
+{
+		int hash = 0;
+    int c;
+    while ((c = (tolower(*word++))))
+    {
+        hash = hash + c;
+    }
+    return hash % SIZE;
+}
+
+==================================================================
+//Polynomial Rolling Hash
+
+//#define SIZE 1e9 + 9
+unsigned int hash(const char *word)
+{
+    int p = 31;
+    long long power_of_p = 1;
+    long long hash_val = 0;
+ 
+    // Loop to calculate the hash value
+    // by iterating over the elements of string
+    for (int i = 0; i < strlen(word); i++) {
+        hash_val
+            = (hash_val + (word[i] - 'a' + 1) * power_of_p)
+              % SIZE;
+        power_of_p
+            = (power_of_p * p) % SIZE;
+    }
+   
+  //return positive remainder only
+    return (hash_val%SIZE + SIZE) % SIZE;
+}
+
+==============================================================
+//Prime Multiplication hash
+
+//#define SIZE 1e9
+unsigned int hash(const char *word)
+{
+	int hash = 7;
+	for (int i = 0; i < strlen(word); i++) 
+	{
+    hash = (hash*31 + word[i])%SIZE;
+	}
+
+	return hash;
+}
+
+==============================================================
+//djb2 by Dan Bernstein
+
+//#define SIZE 80000
+unsigned int hash(const char *word)
+{
+		unsigned int hash = 5381;
+    int c;
+    while ((c = (tolower(*word++))))
+    {
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
+    return hash % SIZE;
+}
+
+==============================================================
+//Jenkins One-at-a-Time Hash
+//#define SIZE 1e9
+unsigned int hash(const char *word)
+{
+
+    unsigned int hash = 0;
+
+    for(; *word; ++word)
+    {
+        hash += *word;
+        hash += (hash << 10);
+        hash ^= (hash >> 6);
+    }
+
+    hash += (hash << 3);
+    hash ^= (hash >> 11);
+    hash += (hash << 15);
+
+    return hash % SIZE;
+}
+
+
+=================================================================
+//sdbm hash
+
+//#define SIZE 1e9
+unsigned int hash(const char *word)
+{
+		unsigned int hash = 0;
+		int c;
+
+    while ((c = (tolower(*word++))))
+		{
+				hash = c + (hash << 6) + (hash << 16) - hash;
+		}
+
+		return hash;
+}
+
+===================================================================
+//lose lose hash
+
+//#define SIZE 1e9
+unsigned int hash(const char *word)
+{
+	unsigned int hash = 0;
+	int c;
+
+    while ((c = (tolower(*word++))))
+	    hash += c;
+
+	return hash;
+}
+
+
+======================================================================
+//PJW Hash
+//#define SIZE 80000
+unsigned int hash(const char *word)
+{
+	const unsigned int BitsInUnsignedInt = (unsigned int)(sizeof(unsigned int) * 8);
+	const unsigned int ThreeQuarters = (unsigned int)((BitsInUnsignedInt * 3) / 4);
+	const unsigned int OneEighth = (unsigned int)(BitsInUnsignedInt / 8);
+	const unsigned int HighBits = (unsigned int)(0xFFFFFFFF) << (BitsInUnsignedInt - OneEighth);
+	unsigned int hash = 0;
+	unsigned int test = 0;
+	unsigned int i = 0;
+
+	int length = strlen(word);
+	for (i = 0; i < length; word++, i++)
+	{
+		hash = (hash << OneEighth) + (*word);
+
+		if ((test = hash & HighBits) != 0)
+		{
+			hash = ((hash ^ (test >> ThreeQuarters)) & (~HighBits));
+		}
+	}
+
+	return hash % SIZE;
+}
